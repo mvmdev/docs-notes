@@ -1,0 +1,180 @@
+---
+sidebar_position: 1
+---
+
+# 1.var-let-const 
+
+## Scope in JavaScript
+
+In JavaScript, `var`, `let`, and `const` have different scoping behaviors.
+
+### `var`
+- Variables declared with `var` are **function-scoped** or **globally-scoped**.
+- If declared outside any function, it becomes a global variable.
+- If declared inside a function, it is scoped to that function.
+- `var` does **not** respect block scope (e.g., within `if` statements or `for` loops).
+
+**Example:**
+```javascript
+var globalVar = "I am global";
+function myFunction() {
+  var functionVar = "I am in function scope";
+  if (true) {
+    var blockVar = "I am in block scope"; // Still accessible outside the if block
+    console.log(blockVar); // Accessible here
+  }
+  console.log(functionVar); // Accessible here
+  console.log(blockVar);    // Accessible here
+}
+myFunction();
+console.log(globalVar);      // Accessible here
+console.log(functionVar);    // Error: functionVar is not defined
+console.log(blockVar);       // Error: blockVar is not defined
+```
+
+---
+
+### `let` and `const`
+- Variables declared with `let` and `const` are **block-scoped**.
+- Their scope is limited to the nearest enclosing block (defined by `{}`), such as within `if` statements, loops, or function bodies.
+
+**Example:**
+```javascript
+function anotherFunction() {
+  let functionScopedVar = "I am in function scope";
+  if (true) {
+    let blockScopedVar = "I am in block scope"; // Different variable
+    console.log(blockScopedVar); // Accessible here
+  }
+  console.log(functionScopedVar); // Accessible here
+  // console.log(blockScopedVar); // Error: blockScopedVar is not defined outside the if block
+}
+anotherFunction();
+```
+
+- `let` and `const` can also be globally scoped if declared at the top level of a script.
+
+**Example:**
+```javascript
+let globalLetVar = "I am a global let variable";
+const globalConstVar = "I am a global const variable";
+// These variables can be accessed anywhere in the script.
+```
+
+**Summary:**
+- `var` can be globally scoped if declared outside any function.
+- `let` and `const` can also be globally scoped if declared outside any block or function, but their main feature is block scoping, which provides more localized control over variable accessibility.
+
+---
+
+## Types of Scope in JavaScript
+
+JavaScript has three types of scope:
+
+1. **Global Scope**:  
+   Variables declared outside any function or block are in the global scope and can be accessed from anywhere in the code.
+
+2. **Function Scope**:  
+   Variables declared within a function are in the function scope and can only be accessed within that function.
+
+3. **Block Scope**:  
+   Variables declared with `let` or `const` within a block (e.g., inside an `if` statement or loop) are in the block scope and can only be accessed within that block.
+
+---
+
+### Example of Scope
+
+```javascript
+var globalVar = "I am global";
+function myFunction() {
+  var functionVar = "I am in function scope";
+  if (true) {
+    let blockVar = "I am in block scope";
+    console.log(blockVar); // Accessible here
+  }
+  console.log(functionVar); // Accessible here
+  // console.log(blockVar); // Error: blockVar is not defined
+}
+// myFunction();
+// console.log(globalVar);      // Accessible here
+// console.log(functionVar);    // Error: functionVar is not defined
+// console.log(blockVar);       // Error: blockVar is not defined
+```
+
+## Question 1: Variable Shadowing
+
+**Variable Shadowing:**  
+In JavaScript, variable shadowing occurs when a variable with the same name as a variable in a higher scope is declared in a lower scope.  
+It's a common practice but can lead to confusion if not used carefully because the inner variable will "shadow" the outer variable.  
+In the example below, `let a` inside the `if` block shadows the outer `let a`, and they are two separate variables despite having the same name.
+
+```javascript
+function test() {
+  let a = "Hello";
+
+  if (true) {
+    let a = "Hello"; // New value assigned
+    console.log(a);
+  }
+
+  console.log(a);
+}
+
+test();
+```
+
+---
+
+## Question 2: Illegal Shadowing
+
+**Illegal Shadowing:**  
+This occurs when trying to shadow a variable using `var` within the same scope where that variable is already defined using `let` or `const`.  
+In the example below, `var b = "Bye";` is illegal shadowing because `b` is already declared using `let` in the same scope.
+
+```javascript
+function func() {
+  var a = "Hello";
+  let b = "Namaste";
+
+  if (true) {
+    let a = "Hi"; // Legal Shadowing
+    var b = "Bye"; // Illegal Shadowing
+    console.log(a); // It will print 'Hi'
+    console.log(b); // It will print error
+  }
+}
+test();
+```
+
+---
+
+## Question 3: Hoisting
+
+**Hoisting:**  
+In JavaScript, hoisting is a behavior where variable and function declarations are moved to the top of their containing scope during the compilation phase.  
+However, only the declarations are hoisted, not the initializations or assignments.  
+In the example below, `console.log(a);` will result in `undefined` because the variable `a` is hoisted to the top but not initialized until later in the code (`var a = 10;`).
+
+```javascript
+console.log(a);
+
+var a = 10;
+```
+
+---
+
+## Question 4: Temporal Dead Zone (TDZ)
+
+**Temporal Dead Zone (TDZ):**  
+TDZ is a specific behavior related to variables declared using `let` and `const`.  
+It refers to the period between the start of the block scope and the actual declaration of the variable.  
+During the TDZ, accessing the variable will result in a `ReferenceError`.  
+In the example below, trying to log `a`, `b`, and `c` before their respective declarations will result in `ReferenceError` for `b` and `c` because the `let` and `const` variables are in the TDZ until they are declared (it will work fine for `var` alone).
+
+```javascript
+console.log(a, b, c);
+
+const c = 30;
+let b = 20;
+var a = 10;
+```
