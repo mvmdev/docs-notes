@@ -37,8 +37,8 @@ jobs:
         run: pnpm build
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
-          publish_branch: gh-pages
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          pnpm add -g gh-pages
+          gh-pages -d build -b gh-pages --repo https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
